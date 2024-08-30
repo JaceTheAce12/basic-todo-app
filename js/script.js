@@ -1,5 +1,5 @@
 const todoInput = document.querySelector('.todo-input');
-
+const addBtn = document.querySelector('.add-btn');
 
 const todos = [
     {
@@ -59,3 +59,6 @@ const addTodo = () => {
 const deleteTodo = () => {
 
 }
+
+
+addBtn.addEventListener('click', addTodo);
