@@ -48,6 +48,7 @@ const addTodo = () => {
         const newTodo = {
             todoId: todos.length,
             todoText: todoText,
+            todoComplete: false,
         }
 
         todos.push(newTodo);
@@ -61,16 +62,23 @@ const addTodo = () => {
 const renderTodos = () => {
     todoList.innerHTML = '';
 
-    todos.forEach(todo => {
+    todos.forEach((todo, i) => {
         const listItem = document.createElement('li');
         listItem.textContent = todo.todoText;
+        listItem.classList.add('todo-item');
 
+        const deleteBtn = document.createElement('span');
+        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>'
+        deleteBtn.addEventListener('click', () => deleteTodo(i));
+
+        listItem.appendChild(deleteBtn);
         todoList.appendChild(listItem);
     })
 }
 
-const deleteTodo = () => {
-
+const deleteTodo = (index) => {
+    todos.splice(index, 1);
+    renderTodos();
 }
 
 addBtn.addEventListener('click', addTodo);
