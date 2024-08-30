@@ -1,5 +1,6 @@
 const todoInput = document.querySelector('.todo-input');
 const addBtn = document.querySelector('.add-btn');
+const todoList = document.querySelector('.todo-list');
 
 const todos = [
     {
@@ -53,12 +54,25 @@ const addTodo = () => {
         console.log(todos);
 
         todoInput.value = '';
+        renderTodos();
     }
+}
+
+const renderTodos = () => {
+    todoList.innerHTML = '';
+
+    todos.forEach(todo => {
+        const listItem = document.createElement('li');
+        listItem.textContent = todo.todoText;
+
+        todoList.appendChild(listItem);
+    })
 }
 
 const deleteTodo = () => {
 
 }
 
-
 addBtn.addEventListener('click', addTodo);
+
+renderTodos();
