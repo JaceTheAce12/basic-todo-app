@@ -63,14 +63,16 @@ const renderTodos = () => {
     todoList.innerHTML = '';
 
     todos.forEach((todo, i) => {
+        const listItemContainer = document.createElement('div');
+        listItemContainer.classList.add('todo-item', 'p-4', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-row', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'cursor-pointer');
+
         const listItem = document.createElement('li');
         listItem.textContent = todo.todoText;
-        listItem.classList.add('todo-item', 'p-4', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100');
 
         if (todo.todoComplete) {
-            listItem.style.textDecoration = 'line-through';
+            listItem.classList.add('line-through');
         } else {
-            listItem.style.textDecoration = 'none';
+            listItem.classList.remove('line-through');
         }
 
         listItem.addEventListener('click', () => {
@@ -79,13 +81,11 @@ const renderTodos = () => {
         });
 
         const deleteBtn = document.createElement('span');
-        deleteBtn.innerHTML = '<i class="fa-solid fa-trash" style="color: red; cursor: pointer;"></i>';
-        deleteBtn.style.marginLeft = '8px';
+        deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer ml-2 hover:text-red-600 transition ease-in-out delay-200"></i>';
         deleteBtn.addEventListener('click', () => deleteTodo(i));
 
         const editBtn = document.createElement('span');
-        editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square" style="color: blue; cursor: pointer;"></i>';
-        editBtn.style.marginRight = '8px';
+        editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer mr-2 hover:text-blue-600 transition ease-in-out delay-200"></i>';
         editBtn.addEventListener('click', () => editTodo(i));
 
         const rightContent = document.createElement('div');
@@ -93,8 +93,9 @@ const renderTodos = () => {
 
         rightContent.appendChild(editBtn);
         rightContent.appendChild(deleteBtn);
-        listItem.appendChild(rightContent);
-        todoList.appendChild(listItem);
+        listItemContainer.appendChild(listItem);
+        listItemContainer.appendChild(rightContent);
+        todoList.appendChild(listItemContainer);
 
         todoCounter();
     })
@@ -116,18 +117,14 @@ const editTodo = (index) => {
 
     const saveBtn = document.createElement('button');
     saveBtn.textContent = 'Save';
-    saveBtn.style.backgroundColor = 'green';
-    saveBtn.classList.add('.bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-green-600', 'ml-2');
+    saveBtn.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-green-600', 'ml-2');
 
     const cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'Cancel';
-    cancelBtn.style.backgroundColor = 'gray';
-    cancelBtn.style.marginLeft = '8px';
     cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-gray-600', 'ml-2');
 
     const rightContent = document.createElement('div');
     rightContent.classList.add('flex', 'justify-between');
-
 
     todoItem.innerHTML = '';
     rightContent.appendChild(saveBtn);
@@ -157,8 +154,8 @@ const editTodo = (index) => {
 
 const todoCounter = () => {
     const completedTodos = document.querySelector('.completed-todos');
-    const completedTodo = todos.filter(todo => !todo.todoComplete).length;
-    completedTodos.textContent = `You have ${completedTodo} ${completedTodo === 1 ? 'todo' : 'todos'} done.`
+    const completedTodo = todos.filter(todo => todo.todoComplete).length;
+    completedTodos.textContent = `You have ${completedTodo} done ${completedTodo === 1 ? 'todo' : 'todos'}.`
 }
 
 const clearTodos = () => {
@@ -176,6 +173,8 @@ todoInput.addEventListener('keypress', (e) => {
     }
 });
 
-clearBtn.addEventListener('click', clearTodos);
+clearBtn.addEventListener('click', () => {
+    confirm('Are you sure you want to clear these todos?') ? clearTodos() : renderTodos();
+});
 
 renderTodos();
