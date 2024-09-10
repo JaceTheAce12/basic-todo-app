@@ -73,6 +73,7 @@ const renderTodos = () => {
 
         const editBtn = document.createElement('span');
         editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+        editBtn.addEventListener('click', () => editTodo(i));
 
         listItem.appendChild(editBtn);
         listItem.appendChild(deleteBtn);
@@ -83,6 +84,26 @@ const renderTodos = () => {
 const deleteTodo = (index) => {
     todos.splice(index, 1);
     renderTodos();
+}
+
+const editTodo = (index) => {
+    const currentText = todos[index].todoText;
+    const todoItem = todoList.children[index];
+
+    const editInput = document.createElement('input');
+    editInput.value = currentText;
+    editInput.type = 'text';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+
+    todoItem.innerHTML = '';
+    todoItem.appendChild(editInput);
+    todoItem.appendChild(saveBtn);
+    todoItem.appendChild(cancelBtn);
 }
 
 addBtn.addEventListener('click', addTodo);
