@@ -1,8 +1,9 @@
 const todoInput = document.querySelector('.todo-input');
 const addBtn = document.querySelector('.add-btn');
 const todoList = document.querySelector('.todo-list');
+const clearBtn = document.querySelector('.clear-todos')
 
-const todos = [
+let todos = [
     {
         todoId: 0,
         todoText: 'Go to the store',
@@ -64,7 +65,7 @@ const renderTodos = () => {
     todos.forEach((todo, i) => {
         const listItem = document.createElement('li');
         listItem.textContent = todo.todoText;
-        listItem.classList.add('todo-item', 'p-4', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'hover:cursor-pointer');
+        listItem.classList.add('todo-item', 'p-4', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100');
 
         if (todo.todoComplete) {
             listItem.style.textDecoration = 'line-through';
@@ -160,7 +161,13 @@ const todoCounter = () => {
     completedTodos.textContent = `You have ${completedTodo} ${completedTodo === 1 ? 'todo' : 'todos'} done.`
 }
 
+const clearTodos = () => {
+    todos = todos.filter(todo => !todo.todoComplete);
+    renderTodos();
+}
+
 addBtn.addEventListener('click', addTodo);
+
 todoInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
@@ -168,5 +175,7 @@ todoInput.addEventListener('keypress', (e) => {
         console.log('pressed');
     }
 });
+
+clearBtn.addEventListener('click', clearTodos);
 
 renderTodos();
