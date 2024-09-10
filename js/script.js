@@ -66,6 +66,17 @@ const renderTodos = () => {
         listItem.textContent = todo.todoText;
         listItem.classList.add('todo-item', 'p-4', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'hover:cursor-pointer');
 
+        if (todo.todoComplete) {
+            listItem.style.textDecoration = 'line-through';
+        } else {
+            listItem.style.textDecoration = 'none';
+        }
+
+        listItem.addEventListener('click', () => {
+            todo.todoComplete = !todo.todoComplete;
+            renderTodos();
+        });
+
         const deleteBtn = document.createElement('span');
         deleteBtn.innerHTML = '<i class="fa-solid fa-trash" style="color: red; cursor: pointer;"></i>';
         deleteBtn.style.marginLeft = '8px';
@@ -83,6 +94,8 @@ const renderTodos = () => {
         rightContent.appendChild(deleteBtn);
         listItem.appendChild(rightContent);
         todoList.appendChild(listItem);
+
+        todoCounter();
     })
 }
 
@@ -139,6 +152,12 @@ const editTodo = (index) => {
     })
 
     cancelBtn.addEventListener('click', () => renderTodos());
+}
+
+const todoCounter = () => {
+    const completedTodos = document.querySelector('.completed-todos');
+    const completedTodo = todos.filter(todo => !todo.todoComplete).length;
+    completedTodos.textContent = `You have ${completedTodo} ${completedTodo === 1 ? 'todo' : 'todos'} done.`
 }
 
 addBtn.addEventListener('click', addTodo);
