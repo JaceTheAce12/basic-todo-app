@@ -82,5 +82,12 @@ const deleteTodo = (index) => {
 }
 
 addBtn.addEventListener('click', addTodo);
+todoInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addTodo();
+        console.log('pressed')
+    }
+});
 
 renderTodos();
