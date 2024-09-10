@@ -68,9 +68,13 @@ const renderTodos = () => {
         listItem.classList.add('todo-item');
 
         const deleteBtn = document.createElement('span');
-        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>'
+        deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
         deleteBtn.addEventListener('click', () => deleteTodo(i));
 
+        const editBtn = document.createElement('span');
+        editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+
+        listItem.appendChild(editBtn);
         listItem.appendChild(deleteBtn);
         todoList.appendChild(listItem);
     })
