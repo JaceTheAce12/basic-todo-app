@@ -154,8 +154,8 @@ const editTodo = (index) => {
 
 const todoCounter = () => {
     const completedTodos = document.querySelector('.completed-todos');
-    const completedTodo = todos.filter(todo => todo.todoComplete).length;
-    completedTodos.textContent = `You have ${completedTodo} done ${completedTodo === 1 ? 'todo' : 'todos'}.`
+    const completedTodo = todos.filter(todo => !todo.todoComplete).length;
+    completedTodos.textContent = `You have ${completedTodo} pending ${completedTodo === 1 ? 'todo' : 'todos'}.`
 }
 
 const clearTodos = () => {
