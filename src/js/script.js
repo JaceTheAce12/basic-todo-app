@@ -1,7 +1,9 @@
 const todoInput = document.querySelector('.todo-input');
 const addBtn = document.querySelector('.add-btn');
 const todoList = document.querySelector('.todo-list');
-const clearBtn = document.querySelector('.clear-todos')
+const clearBtn = document.querySelector('.clear-todos');
+const showModalBtn = document.querySelector('.show-modal');
+const cancelModalBtn = document.querySelector('.cancel-modal');
 
 let todos = [
     {
@@ -164,6 +166,13 @@ const clearTodos = () => {
     renderTodos();
 }
 
+const showModal = () => {
+    const categoryModal = document.querySelector('.category-modal');
+    categoryModal.classList.add('block');
+    categoryModal.classList.remove('hidden');
+
+}
+
 addBtn.addEventListener('click', addTodo);
 
 todoInput.addEventListener('keypress', (e) => {
@@ -177,5 +186,13 @@ todoInput.addEventListener('keypress', (e) => {
 clearBtn.addEventListener('click', () => {
     confirm('Are you sure you want to clear these todos?') ? clearTodos() : renderTodos();
 });
+
+showModalBtn.addEventListener('click', showModal);
+
+cancelModalBtn.addEventListener('click', () => {
+    const categoryModal = document.querySelector('.category-modal');
+    categoryModal.classList.add('hidden');
+    categoryModal.classList.remove('block');
+})
 
 renderTodos();
