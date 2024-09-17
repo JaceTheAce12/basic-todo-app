@@ -43,6 +43,8 @@ let todos = [
     },
 ]
 
+let categories = [];
+
 const addTodo = () => {
     const todoText = todoInput.value.trim();
 
@@ -170,6 +172,23 @@ const showModal = () => {
     const categoryModal = document.querySelector('.category-modal');
     categoryModal.classList.add('block');
     categoryModal.classList.remove('hidden');
+
+    const newSetOfTodos = new Set();
+
+    const currentCategories = document.querySelector('.current-categories');
+    currentCategories.innerHTML = '';
+
+    todos.forEach((todo, i) => {
+        if (!newSetOfTodos.has(todo.category)) {
+            newSetOfTodos.add(todo.category);
+
+            const currentCategory = document.createElement('p');
+            currentCategory.textContent = todo.category;
+            currentCategory.classList.add('cursor-pointer')
+
+            currentCategories.appendChild(currentCategory);
+        }
+    })
 
 }
 
