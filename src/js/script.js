@@ -2,7 +2,6 @@ const todoInput = document.querySelector('.todo-input');
 const addBtn = document.querySelector('.add-btn');
 const todoList = document.querySelector('.todo-list');
 const clearBtn = document.querySelector('.clear-todos');
-const showModalBtn = document.querySelector('.show-modal');
 const cancelModalBtn = document.querySelector('.cancel-modal');
 
 let todos = [
@@ -72,6 +71,7 @@ const renderTodos = () => {
 
         const listItem = document.createElement('li');
         listItem.textContent = todo.todoText;
+        listItem.classList.add('list-item');
 
         if (todo.todoComplete) {
             listItem.classList.add('line-through');
@@ -102,6 +102,11 @@ const renderTodos = () => {
         todoList.appendChild(listItemContainer);
 
         todoCounter();
+        renderCategories();
+
+        addCategory();
+
+        listItemContainer.addEventListener('click', showModal);
     })
 }
 
@@ -184,13 +189,67 @@ const showModal = () => {
 
             const currentCategory = document.createElement('p');
             currentCategory.textContent = todo.category;
-            currentCategory.classList.add('cursor-pointer')
+            currentCategory.classList.add('cursor-pointer', 'p-4', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-row', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100')
 
             currentCategories.appendChild(currentCategory);
         }
     })
+}
+
+const renderCategories = () => {
+    const displayCategories = document.querySelector('.display-categories');
+    displayCategories.innerHTML = '';
+    const newSet = new Set();
+
+    todos.forEach((todo, i) => {
+        if (!newSet.has(todo.category)) {
+            newSet.add(todo.category);
+
+            const categoryContainer = document.createElement('div');
+            categoryContainer.classList.add('py-4', 'px-8', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-row', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'cursor-pointer');
+
+            const categoryText = document.createElement('p');
+            categoryText.textContent = todo.category;
+
+            const deleteBtn = document.createElement('span');
+            deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer ml-2 hover:text-red-600 transition ease-in-out delay-200"></i>';
+            deleteBtn.addEventListener('click', () => deleteCategory(i));
+
+            const editBtn = document.createElement('span');
+            editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer mr-2 hover:text-blue-600 transition ease-in-out delay-200"></i>';
+            editBtn.addEventListener('click', () => editCategory(i));
+
+            const rightContent = document.createElement('div');
+            rightContent.classList.add('flex', 'justify-between');
+
+            rightContent.appendChild(editBtn);
+            rightContent.appendChild(deleteBtn);
+            categoryContainer.appendChild(categoryText);
+            categoryContainer.appendChild(rightContent);
+            displayCategories.appendChild(categoryContainer);
+        }
+    })
+}
+
+const deleteCategory = (index) => {
 
 }
+
+const editCategory = (index) => {
+
+}
+
+const addCategory = () => {
+    const elements = document.querySelectorAll('.list-item');
+
+    elements.forEach((element, i) => {
+        element.addEventListener('click', () => {
+            console.log('You clicked', i);
+        })
+    })
+}
+
+// Button Event Listeners
 
 addBtn.addEventListener('click', addTodo);
 
@@ -206,12 +265,12 @@ clearBtn.addEventListener('click', () => {
     confirm('Are you sure you want to clear these todos?') ? clearTodos() : renderTodos();
 });
 
-showModalBtn.addEventListener('click', showModal);
-
 cancelModalBtn.addEventListener('click', () => {
     const categoryModal = document.querySelector('.category-modal');
     categoryModal.classList.add('hidden');
     categoryModal.classList.remove('block');
 })
+
+console.log(categories);
 
 renderTodos();
