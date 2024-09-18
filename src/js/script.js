@@ -104,9 +104,7 @@ const renderTodos = () => {
         todoCounter();
         renderCategories();
 
-        addCategory();
-
-        listItemContainer.addEventListener('click', showModal);
+        addToCategory();
     })
 }
 
@@ -173,29 +171,6 @@ const clearTodos = () => {
     renderTodos();
 }
 
-const showModal = () => {
-    const categoryModal = document.querySelector('.category-modal');
-    categoryModal.classList.add('block');
-    categoryModal.classList.remove('hidden');
-
-    const newSetOfTodos = new Set();
-
-    const currentCategories = document.querySelector('.current-categories');
-    currentCategories.innerHTML = '';
-
-    todos.forEach((todo, i) => {
-        if (!newSetOfTodos.has(todo.category)) {
-            newSetOfTodos.add(todo.category);
-
-            const currentCategory = document.createElement('p');
-            currentCategory.textContent = todo.category;
-            currentCategory.classList.add('cursor-pointer', 'p-4', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-row', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100')
-
-            currentCategories.appendChild(currentCategory);
-        }
-    })
-}
-
 const renderCategories = () => {
     const displayCategories = document.querySelector('.display-categories');
     displayCategories.innerHTML = '';
@@ -239,12 +214,12 @@ const editCategory = (index) => {
 
 }
 
-const addCategory = () => {
-    const elements = document.querySelectorAll('.list-item');
+const addToCategory = () => {
+    const elements = document.querySelectorAll('.todo-item');
 
     elements.forEach((element, i) => {
         element.addEventListener('click', () => {
-            console.log('You clicked', i);
+            categories.push(element.textContent);
         })
     })
 }
