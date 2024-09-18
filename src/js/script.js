@@ -3,41 +3,42 @@ const addBtn = document.querySelector('.add-btn');
 const todoList = document.querySelector('.todo-list');
 const clearBtn = document.querySelector('.clear-todos');
 const cancelModalBtn = document.querySelector('.cancel-modal');
+const selectCategory = document.querySelector('.select-category');
 
 let todos = [
     {
         todoId: 0,
         todoText: 'Go to the store',
         todoComplete: false,
-        category: 'Chore',
+        category: 'Shopping',
         dueDate: '01-05-2024'
     },
     {
         todoId: 1,
         todoText: 'Mow the lawn',
         todoComplete: true,
-        category: 'Chore',
+        category: 'Work',
         dueDate: '06-15-2024'
     },
     {
         todoId: 2,
         todoText: 'Create my todo project',
         todoComplete: false,
-        category: 'Homework',
+        category: 'Project',
         dueDate: '09-10-2024'
     },
     {
         todoId: 3,
         todoText: 'Watch movie with wife',
         todoComplete: false,
-        category: 'Fun',
+        category: 'Personal',
         dueDate: '09-14-2024'
     },
     {
         todoId: 4,
         todoText: 'Go camping over labor day weekend',
         todoComplete: false,
-        category: 'Fun',
+        category: 'Personal',
         dueDate: '09-01-2024'
     },
 ]
@@ -46,18 +47,22 @@ let categories = [];
 
 const addTodo = () => {
     const todoText = todoInput.value.trim();
+    const categorySelection = selectCategory.value;
+    const categoryText = selectCategory.options[selectCategory.selectedIndex].text;
 
-    if (todoText) {
+    if (todoText && categorySelection) {
         const newTodo = {
             todoId: todos.length,
             todoText: todoText,
             todoComplete: false,
+            category: categoryText
         }
 
         todos.push(newTodo);
         console.log(todos);
 
         todoInput.value = '';
+        categorySelection.value = '';
         renderTodos();
     }
 }
@@ -79,7 +84,7 @@ const renderTodos = () => {
             listItem.classList.remove('line-through');
         }
 
-        listItem.addEventListener('click', () => {
+        listItemContainer.addEventListener('click', () => {
             todo.todoComplete = !todo.todoComplete;
             renderTodos();
         });
@@ -103,8 +108,6 @@ const renderTodos = () => {
 
         todoCounter();
         renderCategories();
-
-        addToCategory();
     })
 }
 
@@ -214,16 +217,6 @@ const editCategory = (index) => {
 
 }
 
-const addToCategory = () => {
-    const elements = document.querySelectorAll('.todo-item');
-
-    elements.forEach((element, i) => {
-        element.addEventListener('click', () => {
-            categories.push(element.textContent);
-        })
-    })
-}
-
 // Button Event Listeners
 
 addBtn.addEventListener('click', addTodo);
@@ -239,12 +232,6 @@ todoInput.addEventListener('keypress', (e) => {
 clearBtn.addEventListener('click', () => {
     confirm('Are you sure you want to clear these todos?') ? clearTodos() : renderTodos();
 });
-
-cancelModalBtn.addEventListener('click', () => {
-    const categoryModal = document.querySelector('.category-modal');
-    categoryModal.classList.add('hidden');
-    categoryModal.classList.remove('block');
-})
 
 console.log(categories);
 

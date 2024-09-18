@@ -16,15 +16,6 @@
         <h1 class="text-white text-center text-3xl font-bold">Todo List</h1>
     </header>
     <main class="max-w-6xl mx-auto p-4 mt-8">
-        <div class="category-modal hidden w-96 m-auto bg-white p-6 rounded-lg shadow-md absolute">
-            <div class="flex flex-row justify-between items-center">
-                <h1 class="text-2xl">Categories</h1>
-                <button class="cancel-modal bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition ease-in-out delay-100">X</button>
-            </div>
-            <h1>Select Category:</h1>
-            <div class="current-categories flex flex-col text-center">
-            </div>
-        </div>
 
         <div class="flex justify-between">
             <div class="display-categories bg-white p-6 rounded-lg shadow-md"></div>
@@ -33,9 +24,16 @@
                     <input type="text" class="todo-input flex-grow border border-gray-300 p-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="What do you need to do?">
                     <button class="add-btn bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition ease-in-out delay-100">ADD</button>
                 </div>
-    
+                <select name="categories" class="select-category">
+                    <option value="">--Please select a category--</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="health">Health</option>
+                    <option value="errand">Errands</option>
+                    <option value="projects">Projects</option>
+                </select>
                 <ul class="todo-list space-y-4"></ul>
-    
                 <footer class="footer mt-6 flex justify-between items-center">
                     <span class="completed-todos text-gray-500"></span>
                     <button class="clear-todos bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition ease-in-out delay-100">Clear Done Todos</button>
