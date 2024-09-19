@@ -43,8 +43,6 @@ let todos = [
     },
 ]
 
-let categories = [];
-
 const addTodo = () => {
     const todoText = todoInput.value.trim();
     const categorySelection = selectCategory.value;
@@ -62,7 +60,7 @@ const addTodo = () => {
         console.log(todos);
 
         todoInput.value = '';
-        categorySelection.value = '';
+        selectCategory.selectedIndex = 0;
         renderTodos();
     }
 }
@@ -108,6 +106,7 @@ const renderTodos = () => {
 
         todoCounter();
         renderCategories();
+        renderTodosByCategory();
     })
 }
 
@@ -178,6 +177,7 @@ const renderCategories = () => {
     const displayCategories = document.querySelector('.display-categories');
     displayCategories.innerHTML = '';
     const newSet = new Set();
+    let toggleContainer = false;
 
     todos.forEach((todo, i) => {
         if (!newSet.has(todo.category)) {
@@ -189,23 +189,36 @@ const renderCategories = () => {
             const categoryText = document.createElement('p');
             categoryText.textContent = todo.category;
 
-            const deleteBtn = document.createElement('span');
-            deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer ml-2 hover:text-red-600 transition ease-in-out delay-200"></i>';
-            deleteBtn.addEventListener('click', () => deleteCategory(i));
+            categoryContainer.addEventListener('click', () => {
+                const todoCategoryContainer = document.querySelector('.todo-category-container');
+                todoCategoryContainer.classList.toggle('hidden');
+                renderTodosByCategory(todo.category);
 
-            const editBtn = document.createElement('span');
-            editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer mr-2 hover:text-blue-600 transition ease-in-out delay-200"></i>';
-            editBtn.addEventListener('click', () => editCategory(i));
+            })
 
-            const rightContent = document.createElement('div');
-            rightContent.classList.add('flex', 'justify-between');
-
-            rightContent.appendChild(editBtn);
-            rightContent.appendChild(deleteBtn);
             categoryContainer.appendChild(categoryText);
-            categoryContainer.appendChild(rightContent);
             displayCategories.appendChild(categoryContainer);
         }
+    })
+
+    console.log(newSet);
+}
+
+const renderTodosByCategory = (category) => {
+    const todoCategoryContainer = document.querySelector('.todo-category-container');
+    todoCategoryContainer.innerHTML = '';
+    const filteredTodos = todos.filter(todo => todo.category === category);
+
+    filteredTodos.forEach((todo, i) => {
+        const categoryTitle = document.createElement('h1');
+        categoryTitle.textContent = `${todo.category}:`;
+        categoryTitle.classList.add('font-bold');
+
+        const todoText = document.createElement('p');
+        todoText.textContent = `${i + 1}. ${todo.todoText}`;
+
+        todoCategoryContainer.appendChild(categoryTitle);
+        todoCategoryContainer.appendChild(todoText);
     })
 }
 
@@ -217,7 +230,7 @@ const editCategory = (index) => {
 
 }
 
-// Button Event Listeners
+// Event Listeners
 
 addBtn.addEventListener('click', addTodo);
 
@@ -225,14 +238,18 @@ todoInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
         addTodo();
-        console.log('pressed');
     }
 });
+
+selectCategory.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        addTodo();
+    }
+})
 
 clearBtn.addEventListener('click', () => {
     confirm('Are you sure you want to clear these todos?') ? clearTodos() : renderTodos();
 });
-
-console.log(categories);
 
 renderTodos();

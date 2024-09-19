@@ -16,7 +16,6 @@
         <h1 class="text-white text-center text-3xl font-bold">Todo List</h1>
     </header>
     <main class="max-w-6xl mx-auto p-4 mt-8">
-
         <div class="flex justify-between">
             <div class="display-categories bg-white p-6 rounded-lg shadow-md"></div>
             <div class="bg-white p-6 rounded-lg shadow-md">
@@ -24,6 +23,7 @@
                     <input type="text" class="todo-input flex-grow border border-gray-300 p-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="What do you need to do?">
                     <button class="add-btn bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition ease-in-out delay-100">ADD</button>
                 </div>
+                <p class="error-message text-red-500"></p>
                 <select name="categories" class="select-category">
                     <option value="">--Please select a category--</option>
                     <option value="work">Work</option>
@@ -38,6 +38,15 @@
                     <span class="completed-todos text-gray-500"></span>
                     <button class="clear-todos bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition ease-in-out delay-100">Clear Done Todos</button>
                 </footer>
+            </div>
+        </div>
+        <div class="todo-category-container bg-white p-6 rounded-lg shadow-md w-96 mt-12 hidden">
+            <div>
+                <button>X</button>
+                <div>
+                    <span><i class="fa-solid fa-trash text-red-500 cursor-pointer ml-2 hover:text-red-600 transition ease-in-out delay-200"></i></span>
+                    <span><i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer mr-2 hover:text-blue-600 transition ease-in-out delay-200"></i></span>
+                </div>
             </div>
         </div>
     </main>
