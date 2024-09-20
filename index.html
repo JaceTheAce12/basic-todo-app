@@ -15,16 +15,21 @@
     <header class="bg-blue-600 p-4 shadow-md">
         <h1 class="text-white text-center text-3xl font-bold">Todo List</h1>
     </header>
-    <main class="max-w-6xl mx-auto p-4 mt-8">
-        <div class="flex justify-between">
-            <div class="display-categories bg-white p-6 rounded-lg shadow-md"></div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
+
+    <main class="max-w-6xl mx-auto p-4 mt-8 space-y-8">
+        <div class="flex flex-col lg:flex-row justify-between space-y-6 lg:space-y-0 lg:space-x-6">
+            <div class="display-categories bg-white p-6 rounded-lg shadow-md lg:w-1/3">
+                <h2 class="text-xl font-semibold mb-4">Categories</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md flex-1">
                 <div class="mb-4 flex">
                     <input type="text" class="todo-input flex-grow border border-gray-300 p-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="What do you need to do?">
                     <button class="add-btn bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition ease-in-out delay-100">ADD</button>
                 </div>
-                <p class="error-message text-red-500"></p>
-                <select name="categories" class="select-category">
+                <p class="error-message text-red-500 mb-4"></p>
+
+                <select name="categories" class="select-category border-2 border-black p-2 rounded-md cursor-pointer w-full mb-4">
                     <option value="">--Please select a category--</option>
                     <option value="work">Work</option>
                     <option value="personal">Personal</option>
@@ -33,24 +38,19 @@
                     <option value="errand">Errands</option>
                     <option value="projects">Projects</option>
                 </select>
-                <ul class="todo-list space-y-4"></ul>
+
+                <ul class="todo-list space-y-4 mt-4"></ul>
+
                 <footer class="footer mt-6 flex justify-between items-center">
                     <span class="completed-todos text-gray-500"></span>
                     <button class="clear-todos bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition ease-in-out delay-100">Clear Done Todos</button>
                 </footer>
             </div>
         </div>
-        <div class="todo-category-container bg-white p-6 rounded-lg shadow-md w-96 mt-12 hidden">
-            <div>
-                <button>X</button>
-                <div>
-                    <span><i class="fa-solid fa-trash text-red-500 cursor-pointer ml-2 hover:text-red-600 transition ease-in-out delay-200"></i></span>
-                    <span><i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer mr-2 hover:text-blue-600 transition ease-in-out delay-200"></i></span>
-                </div>
-            </div>
-        </div>
-    </main>
 
+        <div class="todo-category-container bg-white p-6 rounded-lg shadow-md w-96 lg:w-96 hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        </div>        
+    </main>
 <script src="/src/js/script.js"></script>
 <script src="https://kit.fontawesome.com/e15d06906a.js" crossorigin="anonymous"></script>
 </body>
