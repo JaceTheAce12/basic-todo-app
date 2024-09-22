@@ -91,7 +91,11 @@ const renderTodos = () => {
 
         const editBtn = document.createElement('span');
         editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer mr-2 hover:text-blue-600 transition ease-in-out delay-200"></i>';
-        editBtn.addEventListener('click', () => editTodo(i));
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            editTodo(i)
+        
+        });
 
         const rightContent = document.createElement('div');
         rightContent.classList.add('flex', 'justify-between');
@@ -112,6 +116,7 @@ const deleteTodo = (index) => {
     todos.splice(index, 1);
     todoCounter();
     renderTodos();
+    renderCategories();
 }
 
 const editTodo = (index) => {
@@ -169,6 +174,7 @@ const todoCounter = () => {
 const clearTodos = () => {
     todos = todos.filter(todo => !todo.todoComplete);
     renderTodos();
+    renderCategories();
 }
 
 const renderCategories = () => {
@@ -186,10 +192,14 @@ const renderCategories = () => {
             newSet.add(todo.category);
 
             const categoryContainer = document.createElement('div');
-            categoryContainer.classList.add('category-container','py-4', 'px-8', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-row', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'cursor-pointer');
+            categoryContainer.classList.add('category-container','py-4', 'px-8', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-col', 'justify-between', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'cursor-pointer');
 
             const categoryText = document.createElement('p');
             categoryText.textContent = todo.category;
+
+            const todoText = document.createElement('p');
+            todoText.textContent = `${todo.todoText}...`;
+            todoText.classList.add('text-xs', 'text-gray-500', 'mt-2')
 
             const todoCategoryContainer = document.querySelector('.todo-category-container');
 
@@ -201,6 +211,7 @@ const renderCategories = () => {
             })
 
             categoryContainer.appendChild(categoryText);
+            categoryContainer.appendChild(todoText)
             displayCategories.appendChild(categoryContainer);
         }
     })
