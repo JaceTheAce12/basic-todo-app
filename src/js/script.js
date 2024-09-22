@@ -2,7 +2,6 @@ const todoInput = document.querySelector('.todo-input');
 const addBtn = document.querySelector('.add-btn');
 const todoList = document.querySelector('.todo-list');
 const clearBtn = document.querySelector('.clear-todos');
-const cancelModalBtn = document.querySelector('.cancel-modal');
 const selectCategory = document.querySelector('.select-category');
 
 let todos = [
@@ -177,12 +176,17 @@ const renderCategories = () => {
     displayCategories.innerHTML = '';
     const newSet = new Set();
 
+    const categoryHeader = document.createElement('h1');
+    categoryHeader.textContent = 'Categories: ';
+    categoryHeader.classList.add('font-bold', 'text-3xl', 'mb-6')
+    displayCategories.appendChild(categoryHeader);
+
     todos.forEach((todo, i) => {
-        if (!newSet.has(todo.category)) {
+        if (todo.category && !newSet.has(todo.category)) {
             newSet.add(todo.category);
 
             const categoryContainer = document.createElement('div');
-            categoryContainer.classList.add('py-4', 'px-8', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-row', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'cursor-pointer');
+            categoryContainer.classList.add('category-container','py-4', 'px-8', 'bg-white', 'rounded-lg', 'shadow-md', 'flex', 'flex-row', 'justify-between', 'items-center', 'mb-2', 'text-gray-800', 'hover:bg-gray-100', 'cursor-pointer');
 
             const categoryText = document.createElement('p');
             categoryText.textContent = todo.category;
@@ -193,6 +197,7 @@ const renderCategories = () => {
                 todoCategoryContainer.classList.toggle('hidden');
                 renderTodosByCategory(todo.category);
 
+                categoryButtons(todo.category, i);
             })
 
             categoryContainer.appendChild(categoryText);
@@ -206,10 +211,14 @@ const renderTodosByCategory = (category) => {
     todoCategoryContainer.innerHTML = '';
     const filteredTodos = todos.filter(todo => todo.category === category);
 
+    const cancelModalBtn = document.createElement('button');
+    cancelModalBtn.textContent = 'X';
+    cancelModalBtn.classList.add('absolute', 'top-3', 'right-4', 'bg-red-500','text-white','px-2','py-1','rounded','hover:bg-red-600','transition','ease-in-out','delay-100', 'font-bold');
+
     if (filteredTodos.length > 0) {
-        const categoryTitle = document.createElement('h1');
-        categoryTitle.textContent = `${category}:`;
-        categoryTitle.classList.add('font-bold', 'text-2xl');
+        const categoryTitle = document.createElement('div');
+        categoryTitle.innerHTML = `<h1>${category}:</h1>`;
+        categoryTitle.classList.add('category-title','font-bold', 'text-2xl');
         todoCategoryContainer.appendChild(categoryTitle);
     }
 
@@ -220,16 +229,18 @@ const renderTodosByCategory = (category) => {
         todoText.textContent = `${i + 1}. ${todo.todoText}`;
         
         textContainer.appendChild(todoText);
+        todoCategoryContainer.appendChild(cancelModalBtn);
         todoCategoryContainer.appendChild(textContainer);
 
-        categoryButtons(todo.category);
-
     })
+
+    cancelModalBtn.addEventListener('click', cancelModal);
+
 }
 
-const categoryButtons = (category) => {
+const categoryButtons = (category, index) => {
     const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('flex', 'gap-4', 'absolute', 'bottom-4', 'right-4'); 
+    buttonContainer.classList.add('flex', 'gap-4', 'absolute', 'bottom-2', 'right-4'); 
 
     const deleteBtn = document.createElement('span');
     deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer hover:text-red-600 transition ease-in-out delay-200"></i>';
@@ -241,6 +252,7 @@ const categoryButtons = (category) => {
 
     const editBtn = document.createElement('span');
     editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer hover:text-blue-600 transition ease-in-out delay-200"></i>';
+    editBtn.addEventListener('click', () => editCategory(index))
 
     buttonContainer.appendChild(editBtn);
     buttonContainer.appendChild(deleteBtn);
@@ -253,11 +265,75 @@ const deleteCategory = (category) => {
     todos.forEach(todo => {
         if (todo.category === category) {
             delete todo.category; 
+            const todoCategoryContainer = document.querySelector('.todo-category-container');
+            todoCategoryContainer.classList.add('hidden');
         }
     });
 
     renderTodos(); 
     renderCategories();
+}
+
+const editCategory = (index) => {
+    const categoryTitle = todos[index].category;
+    const todoCategoryContainer = document.querySelector('.todo-category-container');
+    const categoryContainer = todoCategoryContainer.children[index];
+
+    const newCategoryInput = document.createElement('input');
+    newCategoryInput.value = categoryTitle;
+    newCategoryInput.type = 'text'
+    newCategoryInput.classList.add('border', 'border-gray-300', 'p-2', 'rounded-lg', 'w-full', 'mr-2', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500');
+
+    const h1Category = document.querySelector('.category-title');
+    h1Category.innerHTML = '';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    saveBtn.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-green-600', 'ml-2');
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-gray-600', 'ml-2');
+
+    const rightContent = document.createElement('div');
+    rightContent.classList.add('flex', 'justify-between');
+
+    h1Category.appendChild(newCategoryInput);
+    categoryContainer.appendChild(rightContent);
+    categoryContainer.appendChild(saveBtn);
+    categoryContainer.appendChild(cancelBtn);
+
+
+    saveBtn.addEventListener('click', () => {
+        if(newCategoryInput.value.trim()) {
+            todos[index].category = newCategoryInput.value.trim();
+            h1Category.innerHTML = `<h1>${newCategoryInput.value.trim()}:</h1>`;
+
+            newCategoryInput.remove();
+            saveBtn.remove();
+            cancelBtn.remove;
+
+            renderCategories();
+        }
+    })
+
+    cancelBtn.addEventListener('click', () => {
+        h1Category.innerHTML = `<h1>${categoryTitle}:</h1>`;
+
+        newCategoryInput.remove();
+        saveBtn.remove();
+        cancelBtn.remove();
+    });
+
+    renderCategories();
+    console.log(todos[index]);
+    console.log(categoryTitle);
+    
+}
+
+const cancelModal = () => {
+    const todoCategoryContainer = document.querySelector('.todo-category-container');
+    todoCategoryContainer.classList.add('hidden');
 }
 
 // Event Listeners
