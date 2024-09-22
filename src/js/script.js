@@ -23,7 +23,7 @@ let todos = [
         todoId: 2,
         todoText: 'Create my todo project',
         todoComplete: false,
-        category: 'Project',
+        category: 'Projects',
         dueDate: '09-10-2024'
     },
     {
@@ -145,8 +145,9 @@ const editTodo = (index) => {
     todoItem.appendChild(editInput);
     todoItem.appendChild(rightContent);
 
-    saveBtn.addEventListener('click', () => {
+    saveBtn.addEventListener('click', (e) => {
         if (editInput.value.trim() !== '') {
+            e.stopPropagation();
             todos[index].todoText = editInput.value.trim();
             renderTodos();
         }
@@ -155,6 +156,7 @@ const editTodo = (index) => {
     editInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
+            e.stopPropagation();
             if (editInput.value.trim() !== '') {
                 todos[index].todoText = editInput.value.trim();
                 renderTodos();
@@ -162,7 +164,14 @@ const editTodo = (index) => {
         }
     })
 
-    cancelBtn.addEventListener('click', () => renderTodos());
+    editInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+    })
+
+    cancelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        renderTodos()
+    });
 }
 
 const todoCounter = () => {
@@ -224,7 +233,7 @@ const renderTodosByCategory = (category) => {
 
     const cancelModalBtn = document.createElement('button');
     cancelModalBtn.textContent = 'X';
-    cancelModalBtn.classList.add('absolute', 'top-3', 'right-4', 'bg-red-500','text-white','px-2','py-1','rounded','hover:bg-red-600','transition','ease-in-out','delay-100', 'font-bold');
+    cancelModalBtn.classList.add('absolute', 'top-4', 'right-4', 'bg-red-500','text-white','px-2','py-1','rounded','hover:bg-red-600','transition','ease-in-out','delay-100', 'font-bold');
 
     if (filteredTodos.length > 0) {
         const categoryTitle = document.createElement('div');
@@ -310,9 +319,9 @@ const editCategory = (index) => {
     rightContent.classList.add('flex', 'justify-between');
 
     h1Category.appendChild(newCategoryInput);
+    rightContent.appendChild(saveBtn);
+    rightContent.appendChild(cancelBtn)
     categoryContainer.appendChild(rightContent);
-    categoryContainer.appendChild(saveBtn);
-    categoryContainer.appendChild(cancelBtn);
 
 
     saveBtn.addEventListener('click', () => {
@@ -322,7 +331,7 @@ const editCategory = (index) => {
 
             newCategoryInput.remove();
             saveBtn.remove();
-            cancelBtn.remove;
+            cancelBtn.remove();
 
             renderCategories();
         }
@@ -336,7 +345,6 @@ const editCategory = (index) => {
         cancelBtn.remove();
     });
 
-    renderCategories();
     console.log(todos[index]);
     console.log(categoryTitle);
     
