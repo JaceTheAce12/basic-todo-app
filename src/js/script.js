@@ -117,6 +117,8 @@ const deleteTodo = (index) => {
     todoCounter();
     renderTodos();
     renderCategories();
+    const todoCategoryContainer = document.querySelector('.todo-category-container');
+    todoCategoryContainer.classList.add('hidden');
 }
 
 const editTodo = (index) => {
@@ -184,6 +186,8 @@ const clearTodos = () => {
     todos = todos.filter(todo => !todo.todoComplete);
     renderTodos();
     renderCategories();
+    const todoCategoryContainer = document.querySelector('.todo-category-container');
+    todoCategoryContainer.classList.add('hidden');
 }
 
 const renderCategories = () => {
@@ -215,12 +219,11 @@ const renderCategories = () => {
             categoryContainer.addEventListener('click', () => {
                 todoCategoryContainer.classList.toggle('hidden');
                 renderTodosByCategory(todo.category);
-
                 categoryButtons(todo.category, i);
             })
 
             categoryContainer.appendChild(categoryText);
-            categoryContainer.appendChild(todoText)
+            categoryContainer.appendChild(todoText);
             displayCategories.appendChild(categoryContainer);
         }
     })
@@ -228,39 +231,46 @@ const renderCategories = () => {
 
 const renderTodosByCategory = (category) => {
     const todoCategoryContainer = document.querySelector('.todo-category-container');
-    todoCategoryContainer.innerHTML = '';
+    todoCategoryContainer.innerHTML = ''; 
+
     const filteredTodos = todos.filter(todo => todo.category === category);
+
+    const categoryWrapper = document.createElement('div');
+    categoryWrapper.classList.add('category-wrapper', 'border', 'p-4', 'rounded-lg', 'mb-4', 'bg-transparent');
 
     const cancelModalBtn = document.createElement('button');
     cancelModalBtn.textContent = 'X';
-    cancelModalBtn.classList.add('absolute', 'top-4', 'right-4', 'bg-red-500','text-white','px-2','py-1','rounded','hover:bg-red-600','transition','ease-in-out','delay-100', 'font-bold');
+    cancelModalBtn.classList.add('absolute', 'top-4', 'right-4', 'bg-red-500', 'text-white', 'px-2', 'py-1', 'rounded', 'hover:bg-red-600', 'transition', 'ease-in-out', 'delay-100', 'font-bold');
 
     if (filteredTodos.length > 0) {
-        const categoryTitle = document.createElement('div');
-        categoryTitle.innerHTML = `<h1>${category}:</h1>`;
-        categoryTitle.classList.add('category-title','font-bold', 'text-2xl');
-        todoCategoryContainer.appendChild(categoryTitle);
+        const categoryTitle = document.createElement('h1');
+        categoryTitle.textContent = `${category}:`;
+        categoryTitle.classList.add('category-title', 'font-bold', 'text-2xl', 'mb-2');
+        categoryWrapper.appendChild(categoryTitle);
     }
 
     filteredTodos.forEach((todo, i) => {
         const textContainer = document.createElement('div');
+        textContainer.classList.add('todo-text-container', 'mb-2', 'p-2', 'bg-transparent', 'rounded');
 
         const todoText = document.createElement('p');
         todoText.textContent = `${i + 1}. ${todo.todoText}`;
-        
-        textContainer.appendChild(todoText);
-        todoCategoryContainer.appendChild(cancelModalBtn);
-        todoCategoryContainer.appendChild(textContainer);
 
-    })
+        textContainer.appendChild(todoText);
+        categoryWrapper.appendChild(textContainer);
+    });
+
+    categoryWrapper.appendChild(cancelModalBtn);
+    todoCategoryContainer.appendChild(categoryWrapper);
+
+    console.log(todoCategoryContainer);
 
     cancelModalBtn.addEventListener('click', cancelModal);
-
-}
+};
 
 const categoryButtons = (category, index) => {
     const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('flex', 'gap-4', 'absolute', 'bottom-2', 'right-4'); 
+    buttonContainer.classList.add('flex', 'gap-4', 'absolute', 'bottom-2', 'right-4', 'button-container');
 
     const deleteBtn = document.createElement('span');
     deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer hover:text-red-600 transition ease-in-out delay-200"></i>';
@@ -272,15 +282,21 @@ const categoryButtons = (category, index) => {
 
     const editBtn = document.createElement('span');
     editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer hover:text-blue-600 transition ease-in-out delay-200"></i>';
-    editBtn.addEventListener('click', () => editCategory(index))
+    editBtn.addEventListener('click', () => {
+        editCategory(index);
+        editBtn.classList.add('edit-btn', 'hidden');
+        deleteBtn.classList.add('delete-btn', 'hidden');
+    });
 
     buttonContainer.appendChild(editBtn);
     buttonContainer.appendChild(deleteBtn);
 
-    const todoCategoryContainer = document.querySelector('.todo-category-container');
-    todoCategoryContainer.appendChild(buttonContainer);
-}
+    const categoryWrapper = document.querySelector('.category-wrapper');
+    categoryWrapper.setAttribute('data-category-id', index);
+    categoryWrapper.appendChild(buttonContainer);
+};
 
+// Function to delete a category
 const deleteCategory = (category) => {
     todos.forEach(todo => {
         if (todo.category === category) {
@@ -290,18 +306,20 @@ const deleteCategory = (category) => {
         }
     });
 
-    renderTodos(); 
-    renderCategories();
-}
+    renderTodos();
+    renderCategories(); 
+};
 
+// Edit category
 const editCategory = (index) => {
     const categoryTitle = todos[index].category;
-    const todoCategoryContainer = document.querySelector('.todo-category-container');
-    const categoryContainer = todoCategoryContainer.children[index];
+    const categoryContainer = document.querySelector(`[data-category-id="${index}"]`); 
+
+    if (!categoryContainer) return; 
 
     const newCategoryInput = document.createElement('input');
     newCategoryInput.value = categoryTitle;
-    newCategoryInput.type = 'text'
+    newCategoryInput.type = 'text';
     newCategoryInput.classList.add('border', 'border-gray-300', 'p-2', 'rounded-lg', 'w-full', 'mr-2', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500');
 
     const h1Category = document.querySelector('.category-title');
@@ -320,9 +338,8 @@ const editCategory = (index) => {
 
     h1Category.appendChild(newCategoryInput);
     rightContent.appendChild(saveBtn);
-    rightContent.appendChild(cancelBtn)
+    rightContent.appendChild(cancelBtn);
     categoryContainer.appendChild(rightContent);
-
 
     saveBtn.addEventListener('click', () => {
         if(newCategoryInput.value.trim()) {
@@ -335,7 +352,7 @@ const editCategory = (index) => {
 
             renderCategories();
         }
-    })
+    });
 
     cancelBtn.addEventListener('click', () => {
         h1Category.innerHTML = `<h1>${categoryTitle}:</h1>`;
@@ -347,7 +364,6 @@ const editCategory = (index) => {
 
     console.log(todos[index]);
     console.log(categoryTitle);
-    
 }
 
 const cancelModal = () => {
