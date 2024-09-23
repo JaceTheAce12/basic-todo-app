@@ -94,7 +94,6 @@ const renderTodos = () => {
         editBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             editTodo(i)
-        
         });
 
         const rightContent = document.createElement('div');
@@ -270,10 +269,10 @@ const renderTodosByCategory = (category) => {
 
 const categoryButtons = (category, index) => {
     const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('flex', 'gap-4', 'absolute', 'bottom-2', 'right-4', 'button-container');
+    buttonContainer.classList.add('flex', 'gap-4', 'absolute', 'bottom-4', 'right-6', 'button-container');
 
     const deleteBtn = document.createElement('span');
-    deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer hover:text-red-600 transition ease-in-out delay-200"></i>';
+    deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer hover:text-red-600 transition ease-in-out delay-200 text-xl"></i>';
     deleteBtn.addEventListener('click', () => {
         deleteCategory(category);
         renderCategories();
@@ -281,11 +280,10 @@ const categoryButtons = (category, index) => {
     });
 
     const editBtn = document.createElement('span');
-    editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer hover:text-blue-600 transition ease-in-out delay-200"></i>';
+    editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square text-blue-500 cursor-pointer hover:text-blue-600 transition ease-in-out delay-200 text-xl"></i>';
     editBtn.addEventListener('click', () => {
         editCategory(index);
-        editBtn.classList.add('edit-btn', 'hidden');
-        deleteBtn.classList.add('delete-btn', 'hidden');
+        buttonContainer.style.display = 'none';
     });
 
     buttonContainer.appendChild(editBtn);
@@ -341,6 +339,8 @@ const editCategory = (index) => {
     rightContent.appendChild(cancelBtn);
     categoryContainer.appendChild(rightContent);
 
+    const buttonContainer = document.querySelector('.button-container');
+
     saveBtn.addEventListener('click', () => {
         if(newCategoryInput.value.trim()) {
             todos[index].category = newCategoryInput.value.trim();
@@ -349,6 +349,8 @@ const editCategory = (index) => {
             newCategoryInput.remove();
             saveBtn.remove();
             cancelBtn.remove();
+
+            buttonContainer.style.display = 'flex'
 
             renderCategories();
         }
@@ -360,6 +362,8 @@ const editCategory = (index) => {
         newCategoryInput.remove();
         saveBtn.remove();
         cancelBtn.remove();
+
+        buttonContainer.style.display = 'flex'
     });
 
     console.log(todos[index]);
