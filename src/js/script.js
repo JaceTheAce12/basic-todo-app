@@ -96,11 +96,16 @@ const renderTodos = () => {
             editTodo(i)
         });
 
+        const date = document.createElement('p');
+        date.textContent = todo.dueDate;
+        date.classList.add('ml-4', 'font-medium');
+
         const rightContent = document.createElement('div');
         rightContent.classList.add('flex', 'justify-between');
 
         rightContent.appendChild(editBtn);
         rightContent.appendChild(deleteBtn);
+        rightContent.appendChild(date);
         listItemContainer.appendChild(listItem);
         listItemContainer.appendChild(rightContent);
         todoList.appendChild(listItemContainer);
