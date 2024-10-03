@@ -100,6 +100,14 @@ const renderTodos = () => {
             editTodo(i)
         });
 
+        const date = document.createElement('div');
+        date.textContent = todo.dueDate;
+        date.classList.add('mx-4')
+        date.addEventListener('click', (e) => {
+            e.stopPropagation()
+            editDate(i, date);
+        })
+
         const rightContent = document.createElement('div');
         rightContent.classList.add('flex', 'justify-between');
 
