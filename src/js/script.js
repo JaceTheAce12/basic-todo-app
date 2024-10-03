@@ -3,6 +3,7 @@ const addBtn = document.querySelector('.add-btn');
 const todoList = document.querySelector('.todo-list');
 const clearBtn = document.querySelector('.clear-todos');
 const selectCategory = document.querySelector('.select-category');
+const selectDate = document.querySelector('.pick-date');
 
 let todos = [
     {
@@ -45,13 +46,15 @@ let todos = [
 const addTodo = () => {
     const todoText = todoInput.value.trim();
     const categoryText = selectCategory.options[selectCategory.selectedIndex].text;
+    const datePicker = selectDate.value;
 
-    if (todoText && categoryText) {
+    if (todoText && categoryText && datePicker) {
         const newTodo = {
             todoId: todos.length,
             todoText: todoText,
             todoComplete: false,
-            category: categoryText
+            category: categoryText,
+            dueDate: datePicker
         }
 
         todos.push(newTodo);
@@ -59,6 +62,7 @@ const addTodo = () => {
 
         todoInput.value = '';
         selectCategory.selectedIndex = 0;
+        selectDate.value = '';
         renderTodos();
     }
 }
@@ -96,11 +100,21 @@ const renderTodos = () => {
             editTodo(i)
         });
 
+        const date = document.createElement('div');
+        date.textContent = todo.dueDate;
+        date.classList.add('date-container','ml-4', 'font-medium');
+        date.addEventListener('click', (e) => {
+            e.stopPropagation();
+            editDate(i, date);
+
+        })
+
         const rightContent = document.createElement('div');
         rightContent.classList.add('flex', 'justify-between');
 
         rightContent.appendChild(editBtn);
         rightContent.appendChild(deleteBtn);
+        rightContent.appendChild(date);
         listItemContainer.appendChild(listItem);
         listItemContainer.appendChild(rightContent);
         todoList.appendChild(listItemContainer);
@@ -262,8 +276,6 @@ const renderTodosByCategory = (category) => {
     categoryWrapper.appendChild(cancelModalBtn);
     todoCategoryContainer.appendChild(categoryWrapper);
 
-    console.log(todoCategoryContainer);
-
     cancelModalBtn.addEventListener('click', cancelModal);
 };
 
@@ -365,14 +377,34 @@ const editCategory = (index) => {
 
         buttonContainer.style.display = 'flex'
     });
-
-    console.log(todos[index]);
-    console.log(categoryTitle);
 }
 
 const cancelModal = () => {
     const todoCategoryContainer = document.querySelector('.todo-category-container');
     todoCategoryContainer.classList.add('hidden');
+}
+
+const editDate = (index, dateElement) => {
+    const currentDate = todos[index].dueDate;
+
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = currentDate;
+    dateInput.classList.add('border', 'border-gray-300', 'px-2', 'rounded-lg', 'w-full', 'mr-2', 'cursor-pointer');
+
+    dateInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    dateInput.addEventListener('change', (e) => {
+        e.stopPropagation();
+        const newDate = e.target.value;
+        todos[index].dueDate = newDate;
+        renderTodos();
+    });
+
+    dateElement.innerHTML = '';
+    dateElement.appendChild(dateInput);
 }
 
 // Event Listeners
