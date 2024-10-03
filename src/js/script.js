@@ -385,16 +385,25 @@ const cancelModal = () => {
     todoCategoryContainer.classList.add('hidden');
 }
 
-const editDate = (index, element) => {
-    const calendarContainer = document.createElement('div');
-    calendarContainer.innerHTML = `
-        <select>
-            <option>month</option>
-            <option>year</option>
-        </select>
-    `
+const editDate = (index, dateElement) => {
+    const newDate = document.createElement('input');
+    newDate.type = 'date';
+    newDate.value = todos[index].dueDate;
+    newDate.classList.add('border', 'border-gray-300', 'px-2', 'rounded-lg', 'w-full', 'mr-2', 'cursor-pointer');
 
-    element.appendChild(calendarContainer);
+    newDate.addEventListener('click', (e) => {
+        e.stopPropagation();
+    })
+
+    newDate.addEventListener('change', (e) => {
+        const dateInput = e.target.value;
+        todos[index].dueDate = dateInput;
+        e.stopPropagation();
+        renderTodos();
+    })
+
+    dateElement.innerHTML = '';
+    dateElement.appendChild(newDate);
 }
 
 // Event Listeners
