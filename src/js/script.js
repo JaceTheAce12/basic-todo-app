@@ -100,15 +100,6 @@ const renderTodos = () => {
             editTodo(i)
         });
 
-        const date = document.createElement('div');
-        date.textContent = todo.dueDate;
-        date.classList.add('date-container','ml-4', 'font-medium');
-        date.addEventListener('click', (e) => {
-            e.stopPropagation();
-            editDate(i, date);
-
-        })
-
         const rightContent = document.createElement('div');
         rightContent.classList.add('flex', 'justify-between');
 
@@ -382,29 +373,6 @@ const editCategory = (index) => {
 const cancelModal = () => {
     const todoCategoryContainer = document.querySelector('.todo-category-container');
     todoCategoryContainer.classList.add('hidden');
-}
-
-const editDate = (index, dateElement) => {
-    const currentDate = todos[index].dueDate;
-
-    const dateInput = document.createElement('input');
-    dateInput.type = 'date';
-    dateInput.value = currentDate;
-    dateInput.classList.add('border', 'border-gray-300', 'px-2', 'rounded-lg', 'w-full', 'mr-2', 'cursor-pointer');
-
-    dateInput.addEventListener('click', (e) => {
-        e.stopPropagation();
-    });
-
-    dateInput.addEventListener('change', (e) => {
-        e.stopPropagation();
-        const newDate = e.target.value;
-        todos[index].dueDate = newDate;
-        renderTodos();
-    });
-
-    dateElement.innerHTML = '';
-    dateElement.appendChild(dateInput);
 }
 
 // Event Listeners
