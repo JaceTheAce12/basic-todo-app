@@ -100,16 +100,6 @@ const renderTodos = () => {
             editTodo(i)
         });
 
-        const date = document.createElement('p');
-        date.textContent = todo.dueDate;
-        date.classList.add('date-container','ml-4', 'font-medium');
-        date.addEventListener('click', (e) => {
-            date.innerHTML = '';
-            e.stopPropagation();
-            editDate(i, date);
-
-        })
-
         const rightContent = document.createElement('div');
         rightContent.classList.add('flex', 'justify-between');
 
