@@ -5,58 +5,23 @@ const clearBtn = document.querySelector('.clear-todos');
 const selectCategory = document.querySelector('.select-category');
 const selectDate = document.querySelector('.pick-date');
 
-let todos = [
-    {
-        todoId: 0,
-        todoText: 'Go to the store',
-        todoComplete: false,
-        category: 'Shopping',
-        dueDate: '01-05-2024'
-    },
-    {
-        todoId: 1,
-        todoText: 'Mow the lawn',
-        todoComplete: true,
-        category: 'Work',
-        dueDate: '06-15-2024'
-    },
-    {
-        todoId: 2,
-        todoText: 'Create my todo project',
-        todoComplete: false,
-        category: 'Projects',
-        dueDate: '09-10-2024'
-    },
-    {
-        todoId: 3,
-        todoText: 'Watch movie with wife',
-        todoComplete: false,
-        category: 'Personal',
-        dueDate: '09-14-2024'
-    },
-    {
-        todoId: 4,
-        todoText: 'Go camping over labor day weekend',
-        todoComplete: false,
-        category: 'Personal',
-        dueDate: '09-01-2024'
-    },
-]
+let todos = []
 
 const getTodos = async () => {
     try {
         const response = await fetch('http://localhost:3000/todos');
         const data = await response.json();
         console.log(data);
+        todos = data;
+        renderTodos();
     } catch (error) {
         console.error(error);
     }
 };
 
-// Call fetchTodos when the script loads
 getTodos();
 
-const addTodo = () => {
+const addTodo = async () => {
     const todoText = todoInput.value.trim();
     const categoryText = selectCategory.options[selectCategory.selectedIndex].text;
     const datePicker = selectDate.value;
@@ -70,18 +35,32 @@ const addTodo = () => {
             dueDate: datePicker
         }
 
-        todos.push(newTodo);
-        console.log(todos);
+        try {
+            const response = await fetch('http://localhost:3000/todos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newTodo)
+            });
+        
+            const addedTodo = await response.json();
+            todos.push(addedTodo);
+            console.log(todos);
 
-        todoInput.value = '';
-        selectCategory.selectedIndex = 0;
-        selectDate.value = '';
-        renderTodos();
+            todoInput.value = '';
+            selectCategory.selectedIndex = 0;
+            selectDate.value = '';
+            renderTodos();
+        } catch (error) {
+            console.error(error);
+        }
     }
 }
 
 const renderTodos = () => {
     todoList.innerHTML = '';
+    const fragment = document.createDocumentFragment();
 
     todos.forEach((todo, i) => {
         const listItemContainer = document.createElement('div');
@@ -129,7 +108,8 @@ const renderTodos = () => {
         rightContent.appendChild(date);
         listItemContainer.appendChild(listItem);
         listItemContainer.appendChild(rightContent);
-        todoList.appendChild(listItemContainer);
+        fragment.appendChild(listItemContainer);
+        todoList.appendChild(fragment);
 
         todoCounter();
         renderCategories();
@@ -137,16 +117,28 @@ const renderTodos = () => {
     })
 }
 
-const deleteTodo = (index) => {
-    todos.splice(index, 1);
-    todoCounter();
-    renderTodos();
-    renderCategories();
-    const todoCategoryContainer = document.querySelector('.todo-category-container');
-    todoCategoryContainer.classList.add('hidden');
+const deleteTodo = async (index) => {
+    try {
+        const response = await fetch(`http://localhost:3000/todos/${todos[index].todoId}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        todos.splice(index, 1);
+        todoCounter();
+        renderTodos();
+        renderCategories();
+        const todoCategoryContainer = document.querySelector('.todo-category-container');
+        todoCategoryContainer.classList.add('hidden');
+
+    } catch (error) {
+        console.error(error);
+    }
 }
 
-const editTodo = (index) => {
+const editTodo = async (index) => {
     const currentText = todos[index].todoText;
     const todoItem = todoList.children[index];
 
@@ -172,11 +164,26 @@ const editTodo = (index) => {
     todoItem.appendChild(editInput);
     todoItem.appendChild(rightContent);
 
-    saveBtn.addEventListener('click', (e) => {
+    saveBtn.addEventListener('click', async (e) => {
         if (editInput.value.trim() !== '') {
             e.stopPropagation();
             todos[index].todoText = editInput.value.trim();
             renderTodos();
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3000/todos/${todos[index].todoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(todos[index])
+            });
+
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error(error);
         }
     });
 
@@ -297,10 +304,26 @@ const categoryButtons = (category, index) => {
 
     const deleteBtn = document.createElement('span');
     deleteBtn.innerHTML = '<i class="fa-solid fa-trash text-red-500 cursor-pointer hover:text-red-600 transition ease-in-out delay-200 text-xl"></i>';
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('click', async () => {
         deleteCategory(category);
         renderCategories();
         console.log(`Deleted category: ${category}`);
+
+        try {
+            const response = await fetch(`http://localhost:3000/categories/${category}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('Error the network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log(data);
+
+        } catch (error) {
+            console.error(error);
+        }
     });
 
     const editBtn = document.createElement('span');
@@ -334,61 +357,90 @@ const deleteCategory = (category) => {
 
 // Edit category
 const editCategory = (index) => {
-    const categoryTitle = todos[index].category;
-    const categoryContainer = document.querySelector(`[data-category-id="${index}"]`); 
+        const categoryTitle = todos[index].category;
+        const categoryContainer = document.querySelector(`[data-category-id="${index}"]`); 
 
-    if (!categoryContainer) return; 
+        if (!categoryContainer) return; 
 
-    const newCategoryInput = document.createElement('input');
-    newCategoryInput.value = categoryTitle;
-    newCategoryInput.type = 'text';
-    newCategoryInput.classList.add('border', 'border-gray-300', 'p-2', 'rounded-lg', 'w-full', 'mr-2', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500');
+        const newCategoryInput = document.createElement('input');
+        newCategoryInput.value = categoryTitle;
+        newCategoryInput.type = 'text';
+        newCategoryInput.classList.add('border', 'border-gray-300', 'p-2', 'rounded-lg', 'w-full', 'mr-2', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500');
 
-    const h1Category = document.querySelector('.category-title');
-    h1Category.innerHTML = '';
+        const h1Category = document.querySelector('.category-title');
+        h1Category.innerHTML = '';
 
-    const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Save';
-    saveBtn.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-green-600', 'ml-2');
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = 'Save';
+        saveBtn.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-green-600', 'ml-2');
 
-    const cancelBtn = document.createElement('button');
-    cancelBtn.textContent = 'Cancel';
-    cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-gray-600', 'ml-2');
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.classList.add('bg-gray-500', 'text-white', 'px-4', 'py-2', 'rounded-lg', 'hover:bg-gray-600', 'ml-2');
 
-    const rightContent = document.createElement('div');
-    rightContent.classList.add('flex', 'justify-between');
+        const rightContent = document.createElement('div');
+        rightContent.classList.add('flex', 'justify-between');
 
-    h1Category.appendChild(newCategoryInput);
-    rightContent.appendChild(saveBtn);
-    rightContent.appendChild(cancelBtn);
-    categoryContainer.appendChild(rightContent);
+        h1Category.appendChild(newCategoryInput);
+        rightContent.appendChild(saveBtn);
+        rightContent.appendChild(cancelBtn);
+        categoryContainer.appendChild(rightContent);
 
-    const buttonContainer = document.querySelector('.button-container');
+        const buttonContainer = document.querySelector('.button-container');
 
-    saveBtn.addEventListener('click', () => {
-        if(newCategoryInput.value.trim()) {
-            todos[index].category = newCategoryInput.value.trim();
-            h1Category.innerHTML = `<h1>${newCategoryInput.value.trim()}:</h1>`;
+        saveBtn.addEventListener('click', async () => {
+            if (newCategoryInput.value.trim()) {
+                const updatedCategory = newCategoryInput.value.trim();
+                todos[index].category = updatedCategory;
+                h1Category.innerHTML = `<h1>${updatedCategory}:</h1>`;
+
+                newCategoryInput.remove();
+                saveBtn.remove();
+                cancelBtn.remove();
+
+                buttonContainer.style.display = 'flex';
+
+                renderCategories();
+
+                try {
+                    const response = await fetch(`http://localhost:3000/categories`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ category: updatedCategory })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Error the network response was not ok');
+                    }
+
+                    const contentType = response.headers.get('content-type');
+                    let data;
+                    if (contentType && contentType.includes('application/json')) {
+                        data = await response.json();
+                    } else {
+                        data = await response.text();
+                    }
+
+                    console.log(data);
+
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            h1Category.innerHTML = `<h1>${categoryTitle}:</h1>`;
 
             newCategoryInput.remove();
             saveBtn.remove();
             cancelBtn.remove();
 
-            buttonContainer.style.display = 'flex'
+            buttonContainer.style.display = 'flex';
+        });
 
-            renderCategories();
-        }
-    });
-
-    cancelBtn.addEventListener('click', () => {
-        h1Category.innerHTML = `<h1>${categoryTitle}:</h1>`;
-
-        newCategoryInput.remove();
-        saveBtn.remove();
-        cancelBtn.remove();
-
-        buttonContainer.style.display = 'flex'
-    });
 }
 
 const cancelModal = () => {
@@ -438,5 +490,3 @@ selectCategory.addEventListener('keypress', (e) => {
 clearBtn.addEventListener('click', () => {
     confirm('Are you sure you want to clear these todos?') ? clearTodos() : renderTodos();
 });
-
-renderTodos();
