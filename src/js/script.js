@@ -214,12 +214,27 @@ const todoCounter = () => {
     completedTodos.textContent = `You have ${completedTodo} pending ${completedTodo === 1 ? 'todo' : 'todos'}.`
 }
 
-const clearTodos = () => {
-    todos = todos.filter(todo => !todo.todoComplete);
-    renderTodos();
-    renderCategories();
-    const todoCategoryContainer = document.querySelector('.todo-category-container');
-    todoCategoryContainer.classList.add('hidden');
+const clearTodos = async () => {
+    const completedTodos = todos.filter(todo => todo.todoComplete);
+    for (const todo of completedTodos) {
+        try {
+            const response = await fetch(`http://localhost:3000/todos/${todo.todoId}`, {
+                method: 'DELETE'
+            });
+
+            const data = await response.json();
+            console.log(data);
+
+        } catch (error) {
+            console.error("Couldn't clear todo", error);
+        }
+    }
+
+        todos = todos.filter(todo => !todo.todoComplete);
+        renderTodos();
+            renderCategories();
+            const todoCategoryContainer = document.querySelector('.todo-category-container');
+            todoCategoryContainer.classList.add('hidden');
 }
 
 const renderCategories = () => {
@@ -403,18 +418,18 @@ const editCategory = (index) => {
                 renderCategories();
 
                 try {
-                    const response = await fetch(`http://localhost:3000/categories`, {
-                        method: 'POST',
+                    const response = await fetch(`http://localhost:3000/categories/${todos[index].todoId}/${categoryTitle}`, {
+                        method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ category: updatedCategory })
+                        body: JSON.stringify({ newCategory: updatedCategory })
                     });
-
+        
                     if (!response.ok) {
                         throw new Error('Error the network response was not ok');
                     }
-
+        
                     const contentType = response.headers.get('content-type');
                     let data;
                     if (contentType && contentType.includes('application/json')) {
@@ -422,11 +437,11 @@ const editCategory = (index) => {
                     } else {
                         data = await response.text();
                     }
-
+        
                     console.log(data);
-
+        
                 } catch (error) {
-                    console.error(error);
+                    console.error("Couldn't update the category", error);
                 }
             }
         });
@@ -456,18 +471,40 @@ const editDate = (index, dateElement) => {
 
     newDate.addEventListener('click', (e) => {
         e.stopPropagation();
-    })
+    });
 
-    newDate.addEventListener('change', (e) => {
+    newDate.addEventListener('change', async (e) => {
         const dateInput = e.target.value;
+        const oldDueDate = todos[index].dueDate;
+        const todoId = todos[index].todoId;
         todos[index].dueDate = dateInput;
         e.stopPropagation();
         renderTodos();
-    })
+
+        try {
+            const response = await fetch(`http://localhost:3000/todos/${todoId}/${oldDueDate}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ newDueDate: dateInput })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const updatedTodos = await response.json();
+            console.log('Here are the updated todos:', updatedTodos);
+            
+        } catch (error) {
+            console.error('Failed to update due date:', error);
+        }
+    });
 
     dateElement.innerHTML = '';
     dateElement.appendChild(newDate);
-}
+};
 
 // Event Listeners
 
