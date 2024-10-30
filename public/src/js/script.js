@@ -36,7 +36,7 @@ const addTodo = async () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3000/todos', {
+            const response = await fetch('/todos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -119,7 +119,7 @@ const renderTodos = () => {
 
 const deleteTodo = async (index) => {
     try {
-        const response = await fetch(`http://localhost:3000/todos/${todos[index].todoId}`, {
+        const response = await fetch(`/todos/${todos[index].todoId}`, {
             method: 'DELETE'
         });
 
@@ -172,7 +172,7 @@ const editTodo = async (index) => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/todos/${todos[index].todoId}`, {
+            const response = await fetch(`/todos/${todos[index].todoId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -218,7 +218,7 @@ const clearTodos = async () => {
     const completedTodos = todos.filter(todo => todo.todoComplete);
     for (const todo of completedTodos) {
         try {
-            const response = await fetch(`http://localhost:3000/todos/${todo.todoId}`, {
+            const response = await fetch(`/todos/${todo.todoId}`, {
                 method: 'DELETE'
             });
 
@@ -325,7 +325,7 @@ const categoryButtons = (category, index) => {
         console.log(`Deleted category: ${category}`);
 
         try {
-            const response = await fetch(`http://localhost:3000/categories/${category}`, {
+            const response = await fetch(`/categories/${category}`, {
                 method: 'DELETE'
             });
 
@@ -418,7 +418,7 @@ const editCategory = (index) => {
                 renderCategories();
 
                 try {
-                    const response = await fetch(`http://localhost:3000/categories/${todos[index].todoId}/${categoryTitle}`, {
+                    const response = await fetch(`/categories/${todos[index].todoId}/${categoryTitle}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -482,7 +482,7 @@ const editDate = (index, dateElement) => {
         renderTodos();
 
         try {
-            const response = await fetch(`http://localhost:3000/todos/${todoId}/${oldDueDate}`, {
+            const response = await fetch(`/todos/${todoId}/${oldDueDate}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
